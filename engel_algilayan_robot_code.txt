@@ -1,0 +1,50 @@
+int trig = 12;
+int echo = 13;
+int mesafe; //HC-SR04 için değişkenler tanımlandı...
+int sure;
+ 
+int sol_i = 5; //motor bağlantıları...
+int sol_g = 10;
+int sag_i = 6;
+int sag_g = 11;
+ 
+void setup()
+{
+ pinMode(trig, OUTPUT); //trig pini hoparlör,echo pini mikrofon demiştik 
+ pinMode(echo, INPUT); //o yüzden trig pinini output, echo pinini input olarak ayarladık...
+  
+ pinMode(sol_i, OUTPUT);
+ pinMode(sol_g, OUTPUT);
+ pinMode(sag_i, OUTPUT); //motor bağlantıları output olarak ayarlanır...
+ pinMode(sag_g, OUTPUT);
+}
+ 
+void loop()
+{
+ digitalWrite(trig, HIGH);
+ delayMicroseconds(1000);     //düzenli bir ses dalgası elde etmek için 
+ digitalWrite(trig, LOW);     //saniyede 1 kez trig pininden ses dalgası gönderiyoruz...
+  
+ sure = pulseIn(echo, HIGH);   //burada ses dalgasının geri dönüş süresini hesaplamak ardından da mesafeyi hesaplıyoruz...
+ mesafe = (sure / 2) / 29;     //pulseIn komutu bir şart gerçekleştiği zaman arkada bir kronometre çalıştırır 
+                               //burada echo'ya bilgi geldiği zaman yani ses dalgası 
+                               //geri döndüğü zaman pulseIn komutu kronometre çalıştırır...
+  
+ if (mesafe > 0 && mesafe<40)
+ {
+ digitalWrite(sol_i, HIGH);
+ digitalWrite(sol_g, LOW);   //eğer robot bir cisme 40 cm'den den yakın ise robot sola dönecek...
+ digitalWrite(sag_i, LOW);
+ digitalWrite(sag_g, HIGH);
+ delay(200);
+ }
+ 
+ else
+ {
+ digitalWrite(sol_i, HIGH);   //eğer mesafe 40 cm'den fazla ise robot düz gidecek...
+ digitalWrite(sol_g, LOW);
+ digitalWrite(sag_i, HIGH);
+ digitalWrite(sag_g, LOW);
+  delay(10);
+ }
+}
